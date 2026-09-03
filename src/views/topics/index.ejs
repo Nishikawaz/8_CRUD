@@ -1,0 +1,38 @@
+<%- include('../partials/head') %>
+<main class="mx-auto max-w-4xl px-4 py-8">
+  <div class="mb-6 flex items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">Temas de aprendizaje</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        <% if (q) { %>Resultados para “<%= q %>” · <a href="/" class="text-indigo-600 hover:underline">limpiar</a>
+        <% } else { %>Ordenados por votos. Vota lo que te sirvio y subilo para el resto.<% } %>
+      </p>
+    </div>
+    <p class="hidden shrink-0 text-sm text-slate-400 sm:block"><%= topics.length %> tema<%= topics.length === 1 ? '' : 's' %></p>
+  </div>
+
+  <% if (!topics.length) { %>
+    <div class="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-900">
+      <p class="text-slate-500"><%= q ? 'Ningun tema coincide con tu busqueda.' : 'Todavia no hay temas. Se el primero.' %></p>
+      <a href="<%= currentUser ? '/topics/new' : '/auth/register' %>" class="mt-4 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+        <%= currentUser ? 'Crear el primer tema' : 'Crear cuenta para publicar' %>
+      </a>
+    </div>
+  <% } %>
+
+  <ul id="topic-list" class="space-y-3">
+    <% topics.forEach(function (t) { %>
+      <li class="js-topic rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900" data-id="<%= t.id %>">
+        <div class="flex gap-4">
+          <%- include('../partials/vote', { type: 'topic', action: `/topics/${t.id}/vote`, id: t.id, votes: t.votes, hasVoted: t.hasVoted, size: 'lg' }) %>
+          <div class="min-w-0 flex-1">
+            <h2 class="truncate text-lg font-semibold"><a href="/topics/<%= t.id %>" class="hover:text-indigo-600 hover:underline underline-offset-4"><%= t.title %></a></h2>
+            <% if (t.description) { %><p class="mt-1 line-clamp-2 text-sm text-slate-500"><%= t.description %></p><% } %>
+            <p class="mt-2 text-xs text-slate-400"><%= t.links.length %> enlace<%= t.links.length === 1 ? '' : 's' %> · <%= new Date(t.createdAt).toLocaleDateString('es') %></p>
+          </div>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+</main>
+<%- include('../partials/foot') %>

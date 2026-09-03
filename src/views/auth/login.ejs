@@ -1,0 +1,21 @@
+<%- include('../partials/head') %>
+<main class="mx-auto max-w-sm px-4 py-12">
+  <h1 class="text-2xl font-bold tracking-tight">Iniciar sesion</h1>
+  <p class="mt-1 text-sm text-slate-500">Para publicar temas y enlaces. Votar no requiere cuenta.</p>
+  <form action="/auth/login" method="POST" class="js-validated mt-6 space-y-4">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="next" value="<%= next %>">
+    <%- include('../partials/errors', { errors: errors }) %>
+    <div>
+      <label for="username" class="block text-sm font-medium">Usuario</label>
+      <input id="username" name="username" type="text" required autocomplete="username" autofocus value="<%= values.username || '' %>" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-slate-700 dark:bg-slate-800">
+    </div>
+    <div>
+      <label for="password" class="block text-sm font-medium">Contrasena</label>
+      <input id="password" name="password" type="password" required autocomplete="current-password" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-slate-700 dark:bg-slate-800">
+    </div>
+    <button class="w-full rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700">Entrar</button>
+  </form>
+  <p class="mt-4 text-center text-sm text-slate-500">¿No tenes cuenta? <a href="/auth/register" class="text-indigo-600 hover:underline">Crear una</a></p>
+</main>
+<%- include('../partials/foot') %>

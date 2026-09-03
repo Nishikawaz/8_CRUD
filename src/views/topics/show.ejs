@@ -1,0 +1,76 @@
+<%- include('../partials/head') %>
+<main class="mx-auto max-w-4xl px-4 py-8">
+  <a href="/" class="text-sm text-slate-500 hover:text-indigo-600">&larr; Todos los temas</a>
+
+  <article class="mt-3 rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+    <div class="flex gap-4">
+      <%- include('../partials/vote', { type: 'topic', action: `/topics/${topic.id}/vote`, id: topic.id, votes: topic.votes, hasVoted: topic.hasVoted, size: 'lg' }) %>
+      <div class="min-w-0 flex-1">
+        <h1 class="text-2xl font-bold tracking-tight"><%= topic.title %></h1>
+        <% if (topic.description) { %><p class="mt-2 whitespace-pre-line text-slate-600 dark:text-slate-300"><%= topic.description %></p><% } %>
+        <p class="mt-3 text-xs text-slate-400">Creado el <%= new Date(topic.createdAt).toLocaleDateString('es') %><% if (topic.updatedAt !== topic.createdAt) { %> · editado el <%= new Date(topic.updatedAt).toLocaleDateString('es') %><% } %></p>
+        <% if (currentUser && (topic.authorId === null || topic.authorId === currentUser.id)) { %>
+          <div class="mt-4 flex gap-2">
+            <a href="/topics/<%= topic.id %>/edit" class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">Editar tema</a>
+            <form action="/topics/<%= topic.id %>?_method=DELETE" method="POST" class="js-delete" data-confirm="Vas a eliminar “<%= topic.title %>” y todos sus enlaces. No se puede deshacer.">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="rounded-lg border border-rose-300 px-3 py-1.5 text-sm text-rose-700 hover:bg-rose-50 dark:border-rose-900 dark:text-rose-300 dark:hover:bg-rose-950">Eliminar tema</button>
+            </form>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </article>
+
+  <section class="mt-8">
+    <h2 class="text-lg font-semibold">Enlaces <span class="text-sm font-normal text-slate-400">(<%= topic.links.length %>, ordenados por votos)</span></h2>
+    <ul id="link-list" class="mt-3 space-y-2">
+      <% topic.links.forEach(function (l) { %>
+        <li class="js-link rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900" data-id="<%= l.id %>">
+          <div class="flex items-start gap-3">
+            <%- include('../partials/vote', { type: 'link', action: `/topics/${topic.id}/links/${l.id}/vote`, id: l.id, votes: l.votes, hasVoted: l.hasVoted, size: 'sm' }) %>
+            <div class="min-w-0 flex-1">
+              <a href="<%= l.url %>" target="_blank" rel="noopener noreferrer nofollow" class="font-medium hover:text-indigo-600 hover:underline underline-offset-4"><%= l.title %></a>
+              <p class="truncate text-xs text-slate-400"><%= l.url %></p>
+              <% if (currentUser && (l.authorId === null || l.authorId === currentUser.id)) { %>
+                <details class="mt-2 text-sm">
+                  <summary class="w-fit cursor-pointer list-none text-xs text-slate-500 hover:text-indigo-600">Editar / eliminar</summary>
+                  <div class="mt-2 space-y-2 rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                    <form action="/topics/<%= topic.id %>/links/<%= l.id %>?_method=PUT" method="POST" class="js-validated space-y-2">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="text" name="title" value="<%= l.title %>" required minlength="3" maxlength="120" aria-label="Titulo del enlace" class="w-full rounded-md border border-slate-300 bg-white px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-900">
+                      <input type="url" name="url" value="<%= l.url %>" required maxlength="2048" aria-label="URL del enlace" class="w-full rounded-md border border-slate-300 bg-white px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-900">
+                      <button class="rounded-md bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700">Guardar</button>
+                    </form>
+                    <form action="/topics/<%= topic.id %>/links/<%= l.id %>?_method=DELETE" method="POST" class="js-delete" data-confirm="¿Eliminar el enlace “<%= l.title %>”?">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="text-xs text-rose-600 hover:underline dark:text-rose-400">Eliminar enlace</button>
+                    </form>
+                  </div>
+                </details>
+              <% } %>
+            </div>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+    <% if (!topic.links.length) { %>
+      <p class="mt-3 rounded-lg border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-500 dark:border-slate-700">Todavia no hay enlaces en este tema.</p>
+    <% } %>
+
+    <% if (currentUser) { %>
+      <form action="/topics/<%= topic.id %>/links" method="POST" class="js-validated mt-5 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <h3 class="text-sm font-semibold">Agregar un enlace</h3>
+        <div class="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+          <input type="text" name="title" placeholder="Titulo" required minlength="3" maxlength="120" aria-label="Titulo del enlace" class="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-slate-700 dark:bg-slate-800">
+          <input type="url" name="url" placeholder="https://…" required maxlength="2048" aria-label="URL del enlace" class="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-slate-700 dark:bg-slate-800">
+          <button class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Agregar</button>
+        </div>
+      </form>
+    <% } else { %>
+      <p class="mt-5 text-sm text-slate-500"><a href="/auth/login?next=<%= encodeURIComponent('/topics/' + topic.id) %>" class="text-indigo-600 hover:underline">Inicia sesion</a> para agregar enlaces. Votar no requiere cuenta.</p>
+    <% } %>
+  </section>
+</main>
+<%- include('../partials/foot') %>

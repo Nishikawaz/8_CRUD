@@ -1,0 +1,6 @@
+<% if (errors && errors.length) { %>
+  <div role="alert" class="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-200">
+    <p class="font-medium">Revisa estos puntos:</p>
+    <ul class="mt-1 list-disc pl-5"><% errors.forEach(function (e) { %><li><%= e %></li><% }) %></ul>
+  </div>
+<% } %>

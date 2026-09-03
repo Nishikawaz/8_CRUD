@@ -1,0 +1,26 @@
+<%- include('../partials/head') %>
+<main class="mx-auto max-w-sm px-4 py-12">
+  <h1 class="text-2xl font-bold tracking-tight">Crear cuenta</h1>
+  <form action="/auth/register" method="POST" class="js-validated mt-6 space-y-4">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="next" value="<%= next %>">
+    <%- include('../partials/errors', { errors: errors }) %>
+    <div>
+      <label for="username" class="block text-sm font-medium">Usuario</label>
+      <input id="username" name="username" type="text" required minlength="3" maxlength="32" pattern="[A-Za-z0-9_.\-]+" autocomplete="username" autofocus value="<%= values.username || '' %>" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-slate-700 dark:bg-slate-800">
+      <p class="mt-1 text-xs text-slate-400">3 a 32 caracteres: letras, numeros y . _ -</p>
+    </div>
+    <div>
+      <label for="password" class="block text-sm font-medium">Contrasena</label>
+      <input id="password" name="password" type="password" required minlength="8" maxlength="128" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-slate-700 dark:bg-slate-800">
+      <p class="mt-1 text-xs text-slate-400">Minimo 8 caracteres.</p>
+    </div>
+    <div>
+      <label for="passwordConfirm" class="block text-sm font-medium">Repetir contrasena</label>
+      <input id="passwordConfirm" name="passwordConfirm" type="password" required minlength="8" autocomplete="new-password" data-match="password" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-slate-700 dark:bg-slate-800">
+    </div>
+    <button class="w-full rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700">Crear cuenta</button>
+  </form>
+  <p class="mt-4 text-center text-sm text-slate-500">¿Ya tenes cuenta? <a href="/auth/login" class="text-indigo-600 hover:underline">Iniciar sesion</a></p>
+</main>
+<%- include('../partials/foot') %>

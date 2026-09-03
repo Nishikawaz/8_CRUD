@@ -1,0 +1,15 @@
+<%#
+  Boton de voto: un <form> real. Funciona sin JS (POST + redirect); el JS lo
+  intercepta para evitar la recarga. Params: action, type, id, votes, hasVoted, size
+%>
+<form action="<%= action %>" method="POST" class="js-vote shrink-0" data-type="<%= type %>" data-id="<%= id %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <button type="submit" aria-pressed="<%= hasVoted ? 'true' : 'false' %>" title="<%= hasVoted ? 'Quitar mi voto' : 'Votar' %>"
+          class="js-vote-btn group flex <%= size === 'sm' ? 'h-11 w-11' : 'h-14 w-14' %> flex-col items-center justify-center rounded-xl border transition <%= hasVoted
+            ? 'border-indigo-500 bg-indigo-50 text-indigo-700 dark:border-indigo-400 dark:bg-indigo-950 dark:text-indigo-300'
+            : 'border-slate-200 bg-white text-slate-500 hover:border-indigo-400 hover:text-indigo-600 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-indigo-500' %>">
+    <svg class="h-3.5 w-3.5 transition group-hover:-translate-y-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3 3 12h4v5h6v-5h4z"/></svg>
+    <span class="js-count <%= size === 'sm' ? 'text-xs' : 'text-sm' %> font-semibold tabular-nums"><%= votes %></span>
+    <span class="sr-only">votos · <%= hasVoted ? 'ya votaste' : 'votar' %></span>
+  </button>
+</form>
