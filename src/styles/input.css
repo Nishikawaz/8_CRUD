@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/* Tailwind v4 escanea el fuente para saber que clases generar; las clases
+   viven en .ejs y en cadenas de JS, asi que se nombran las carpetas. */
+@source "../views";
+@source "../public/js";
+
+/* Clases que el JS aplica en caliente (paint): no aparecen como texto suelto
+   en las plantillas y el purge las descartaria. */
+@source inline("{,dark:}{border,bg,text}-{indigo,slate}-{50,200,300,400,500,600,700,800,950}");
+@source inline("border-rose-500");
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+@layer components {
+  summary::-webkit-details-marker { display: none; }
+}
